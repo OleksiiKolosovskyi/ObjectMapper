@@ -375,7 +375,7 @@ extension Mapper {
 	
 	/// Converts an Object to a JSON string with option of pretty formatting
 	public static func toJSONString(_ JSONObject: Any, prettyPrint: Bool) -> String? {
-		let options: JSONSerialization.WritingOptions = prettyPrint ? .prettyPrinted : []
+		let options: JSONSerialization.WritingOptions = prettyPrint ? [.prettyPrinted, .sortedKeys] : [.sortedKeys]
 		if let JSON = Mapper.toJSONData(JSONObject, options: options) {
 			return String(data: JSON, encoding: String.Encoding.utf8)
 		}
