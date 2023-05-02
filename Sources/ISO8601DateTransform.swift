@@ -28,9 +28,9 @@
 
 import Foundation
 
-class ISO8601DateTransform : TransformType {
-    typealias Object = Date
-    typealias JSON = String
+open class ISO8601DateTransform : TransformType {
+    public typealias Object = Date
+    public typealias JSON = String
     
     
     let dateFormatter: DateFormatter = DateFormatter()
@@ -48,7 +48,7 @@ class ISO8601DateTransform : TransformType {
     }
 
     
-    func transformFromJSON(_ value: Any?) -> Date? {
+    public func transformFromJSON(_ value: Any?) -> Date? {
         if let dateString = value as? String {
             if let date = check(withFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'", string: dateString) {
                 return date
@@ -65,7 +65,7 @@ class ISO8601DateTransform : TransformType {
     }
     
     
-    func transformToJSON(_ value: Date?) -> String? {
+    public func transformToJSON(_ value: Date?) -> String? {
         if let date = value {
             return dateFormatter.string(from: date)
         }
