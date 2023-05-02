@@ -28,20 +28,48 @@
 
 import Foundation
 
-public extension DateFormatter {
-	convenience init(withFormat format : String, locale : String) {
-		self.init()
-		self.locale = Locale(identifier: locale)
-		dateFormat = format
-	}
+class ISO8601DateTransform : TransformType {
+    typealias Object = Date
+    typealias JSON = String
+    
+    
+    let dateFormatter: DateFormatter = DateFormatter()
+    
+    
+    init() {
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    }
+    
+    
+    private func check(withFormat format: String, string dateStr: String) -> Date? {
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: dateStr)
+    }
+
+    
+    func transformFromJSON(_ value: Any?) -> Date? {
+        if let dateString = value as? String {
+            if let date = check(withFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'", string: dateString) {
+                return date
+                
+            } else if let date = check(withFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ", string: dateString) {
+                return date
+                
+            } else if let date = check(withFormat: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", string: dateString) {
+                return date
+            }
+        }
+        
+        return nil
+    }
+    
+    
+    func transformToJSON(_ value: Date?) -> String? {
+        if let date = value {
+            return dateFormatter.string(from: date)
+        }
+        
+        return nil
+    }
 }
-
-open class ISO8601DateTransform: DateFormatterTransform {
-	
-	static let reusableISODateFormatter = DateFormatter(withFormat: "yyyy-MM-dd'T'HH:mm:ssZZZZZ", locale: "en_US_POSIX")
-
-	public init() {
-		super.init(dateFormatter: ISO8601DateTransform.reusableISODateFormatter)
-	}
-}
-
